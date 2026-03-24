@@ -5,3 +5,6 @@
 	path = frontend
 	url = https://github.com/ShubhamP1028/snn-leaf-guardian
 	branch = capstone
+[submodule "PlantVillage-Dataset"]
+	path = PlantVillage-Dataset
+	url = https://github.com/spMohanty/PlantVillage-Dataset
