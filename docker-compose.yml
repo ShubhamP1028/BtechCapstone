@@ -1,16 +1,15 @@
-# docker-compose.yml — SNN Leaf Guardian full-stack deployment
+# docker-compose.yml — Project ADITI full-stack deployment
 # ─────────────────────────────────────────────────────────────────────────────
 # Usage:
-#   docker-compose up --build          # build & run both services
-#   docker-compose up -d               # detached mode
-#   docker-compose down                # stop & remove containers
+#   docker-compose up --build        # build images & start containers
+#   docker-compose up --build -d     # same, detached
+#   docker-compose down              # stop & remove containers
+#   docker-compose logs -f           # tail logs
 # ─────────────────────────────────────────────────────────────────────────────
-
-version: "3.9"
 
 services:
 
-  # ── Flask ML backend ────────────────────────────────────────────────────────
+  # ── Flask ML backend ─────────────────────────────────────────────────────────
   backend:
     build:
       context: ./backend
@@ -22,19 +21,18 @@ services:
       - MODEL_PATH=/app/regular_spiking_model.pt
       - FLASK_ENV=production
     volumes:
-      # Mount the model file from the host — keeps it out of the image layer
       - ./regular_spiking_model.pt:/app/regular_spiking_model.pt:ro
     ports:
-      - "1028:1028"
+      - "127.0.0.1:5050:1028"
     healthcheck:
       test: ["CMD", "python", "-c",
-             "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health')"]
+             "import urllib.request; urllib.request.urlopen('http://127.0.0.1:1028/api/health')"]
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 30s
+      start_period: 40s
 
-  # ── React/Vite frontend (nginx) ──────────────────────────────────────────────
+  # ── React/Vite frontend (nginx) ───────────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
@@ -43,7 +41,7 @@ services:
     container_name: aditi-frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "127.0.0.1:8080:80"
     depends_on:
       backend:
         condition: service_healthy

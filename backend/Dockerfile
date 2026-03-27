@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt \
     --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Copy application source
-COPY app.py labels.py ./
+COPY app.py labels.py model.py ./
 
 # The model is mounted as a volume at runtime (see docker-compose.yml)
 # MODEL_PATH env var can override the default location
